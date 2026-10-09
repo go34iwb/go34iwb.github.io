@@ -26,4 +26,109 @@
   }
   header { max-width: 1100px; margin: 0 auto 32px; }
   h1 { margin: 0 0 8px; font-size: 2em; }
-  #sub { color: va...(truncated)
+  #sub { color: var(--muted); margin: 0; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform .15s, border-color .15s, box-shadow .15s;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+    box-shadow: 0 8px 24px rgba(0,0,0,.25);
+  }
+  .card h2 { margin: 0 0 8px; font-size: 1.15em; }
+  .card p { margin: 0; color: var(--muted); font-size: .9em; }
+  .tags { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
+  .tag {
+    font-size: .7em; padding: 3px 8px; border-radius: 999px;
+    background: var(--border); color: var(--muted);
+  }
+  .tag.ok { background: rgba(46,160,67,.15); color: var(--ok); }
+  .tag.warn { background: rgba(210,153,34,.15); color: var(--warn); }
+  .tag.err { background: rgba(248,81,73,.15); color: var(--err); }
+  .status { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-size: .85em; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot.ok { background: var(--ok); }
+  .dot.warn { background: var(--warn); }
+  .dot.err { background: var(--err); }
+  .dot.unknown { background: var(--muted); }
+  footer { max-width: 1100px; margin: 48px auto 0; padding-top: 24px; border-top: 1px solid var(--border); color: var(--muted); font-size: .85em; text-align: center; }
+  @media (max-width: 600px) { header { padding: 0 12px; } .grid { padding: 0 12px; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clemens's Projekte</h1>
+  <p id="sub">Dashboard-Hub — Übersicht aller GitHub Pages Projekte</p>
+</header>
+<div class="grid" id="projects"></div>
+<footer>
+  Automatisch generiert · <a href="https://github.com/go34iwb" style="color:var(--accent)">go34iwb</a> · Letzte Aktualisierung: <span id="updated"></span>
+</footer>
+<script>
+const projects = [
+  {
+    name: "VW T6 Digital Twin",
+    desc: "OBD-II + GPS Telemetrie via Pi Zero 2 W, Tailscale, SQLite, GitHub Pages Dashboard (Chart.js + Leaflet)",
+    url: "https://go34iwb.github.io/vw-t6-twin/",
+    repo: "https://github.com/go34iwb/vw-t6-twin",
+    tags: ["Hardware", "Python", "Telemetry"],
+    status: "ok"
+  },
+  {
+    name: "VW T6 Heckauszug",
+    desc: "Modularer Heckauszug mit 3 Modulen (Euroboxen + Kühlbox) — CAD, BOM, Fertigungszeichnungen",
+    url: "https://go34iwb.github.io/vw-heckauszug/",
+    repo: "https://github.com/go34iwb/vw-heckauszug",
+    tags: ["CAD", "Fahrzeugbau"],
+    status: "ok"
+  },
+  {
+    name: "VW T6 Schnittmuster",
+    desc: "Schnittmuster für Innenverkleidung — DXF/PDF Export, Materialberechnung",
+    url: "https://go34iwb.github.io/vw-schnittmuster/",
+    repo: "https://github.com/go34iwb/vw-schnittmuster",
+    tags: ["CAD", "Textil"],
+    status: "ok"
+  },
+  {
+    name: "Bartresen Küche",
+    desc: "Stehhöhen-Eichen-Arbeitsplatte mit Barauszug — Design, Fertigung, Montage",
+    url: "https://go34iwb.github.io/bartresen-kueche/",
+    repo: "https://github.com/go34iwb/bartresen-kueche",
+    tags: ["Holzbau", "Möbel"],
+    status: "ok"
+  }
+];
+const grid = document.getElementById('projects');
+projects.forEach(p => {
+  const card = document.createElement('a');
+  card.className = 'card';
+  card.href = p.url;
+  card.target = '_blank';
+  card.rel = 'noopener';
+  const statusDot = {ok:'ok', warn:'warn', err:'err', unknown:'unknown'}[p.status] || 'unknown';
+  card.innerHTML = `
+    <h2>${p.name}</h2>
+    <p>${p.desc}</p>
+    <div class="tags">${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+    <div class="status"><span class="dot ${statusDot}"></span>${p.status === 'ok' ? 'Live' : p.status === 'warn' ? 'Warnung' : p.status === 'err' ? 'Fehler' : 'Unbekannt'}</div>
+  `;
+  grid.appendChild(card);
+});
+document.getElementById('updated').textContent = new Date().toLocaleString('de-DE', {dateStyle:'medium', timeStyle:'short'});
+</script>
+</body>
+</html>
